@@ -29,7 +29,6 @@ class FileReader:
         self.sock.sendto(data, (self.host, self.port))
 
     def send_rrq(self):
-        logger.warning("Making a request to {}:{} for file {}".format(self.host, str(self.port), self.filename))
         fmt = '!H{}sB{}sB'.format(len(self.filename), len(self.mode))
         data = struct.pack(fmt, OP_RRQ, self.filename, 0, self.mode, 0)
         self.send(data)

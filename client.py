@@ -1,6 +1,6 @@
 import socket
-import sys
 import struct
+import argparse
 
 PACKET_TIMEOUT = 1.0
 OP_RRQ = 1
@@ -11,8 +11,10 @@ OP_ERROR = 5
 
 DATA_SIZE = 512
 
+
 class TransferException(Exception):
     pass
+
 
 class FileReader:
     """
@@ -108,8 +110,11 @@ class FileReader:
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 69
-    filename = sys.argv[1]
+    parser = argparse.ArgumentParser(description='A simple netascii-only tftp client')
+    parser.add_argument('-H', '--host', type=str, default='localhost', help='TFTP server hostname. Defaults to localhost.')
+    parser.add_argument('-p', '--port', type=int, default=69, help='TFTP server port. Defaults to 69.')
+    parser.add_argument('filename', type=str)
+    args = parser.parse_args()
 
-    reader = FileReader(filename, HOST, PORT)
+    reader = FileReader(args.filename, args.host, args.port)
     reader.perform_transfer()

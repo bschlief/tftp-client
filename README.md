@@ -1,4 +1,4 @@
-A simple netascii-only tftp client in Python.
+A simple netascii-only tftp client in Python for getting files. Write requests not supported (yet).
 
 Usage
 -----

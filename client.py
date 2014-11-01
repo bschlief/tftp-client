@@ -1,6 +1,7 @@
 import socket
 import struct
 import argparse
+from cStringIO import StringIO
 
 PACKET_TIMEOUT = 1.0
 OP_RRQ = 1
@@ -29,7 +30,11 @@ class FileReader:
         self.port = port
         self.mode = 'netascii'
         self.block_number = 0
-        self.contents = ''
+        self._contents = StringIO()
+
+    @property
+    def contents(self):
+        return self._contents.getvalue()
 
     def send(self, data):
         """
@@ -76,7 +81,7 @@ class FileReader:
         """
         fmt = '!HH{}s'.format(len(raw_data)-4)
         opcode, block_number, data = struct.unpack(fmt, raw_data)
-        self.contents += data
+        self._contents.write(data)
         self.block_number += 1
         if len(data) == DATA_SIZE:
             return True
@@ -109,7 +114,7 @@ class FileReader:
         Write the stored contents to a file.
         """
         with open(self.filename, "w") as f:
-            f.write(self.contents)
+            f.write(self._contents.getvalue())
 
     def perform_transfer(self):
         """

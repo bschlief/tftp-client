@@ -4,7 +4,7 @@ Usage
 -----
 
 ```
-client.py [-h] [-H HOST] [-p PORT] filename
+python client.py [-h] [-H HOST] [-p PORT] filename
 
 positional arguments:
   filename
@@ -15,4 +15,10 @@ optional arguments:
   -p PORT, --port PORT  TFTP server port. Defaults to 69.
 ```
 
+Testing
+-------
 
+```
+pip install -r requirements.txt
+python test.py
+```

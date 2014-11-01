@@ -60,6 +60,13 @@ class FileReader:
         opcode = struct.unpack("!H", packed_opcode)
         return opcode[0]
 
+    def get_block_number(self, packed_block_number):
+        """
+        Gets an op code out of a packed string.
+        """
+        opcode = struct.unpack("!H", packed_block_number)
+        return opcode[0]
+
     def append_data_to_contents(self, raw_data):
         """
         Receive a chunk of raw udp data, and append it to the internal string buffer
@@ -79,12 +86,21 @@ class FileReader:
         """
         Get the raw data from the server. Change over to the tftp-server's
         requested port upon receiving the new address.
+
+        Returns True if more data is expected, otherwise returns False.
         """
         raw_data, (self.host, self.port) = self.sock.recvfrom(516)
 
         opcode = self.get_opcode(raw_data[0:2])
         if opcode == OP_ERROR:
             raise TransferException(raw_data)
+
+        if opcode == OP_DATA:
+            block_number = self.get_block_number(raw_data[2:4])
+
+            # If this block isn't the expected one, go back to listening
+            if block_number != self.block_number+1:
+                return True
 
         return self.append_data_to_contents(raw_data)
 

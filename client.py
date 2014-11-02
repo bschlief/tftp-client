@@ -10,6 +10,7 @@ OP_DATA = 3
 OP_ACK = 4
 OP_ERROR = 5
 
+DATA_HEADER_SIZE = 4
 DATA_SIZE = 512
 
 
@@ -94,7 +95,7 @@ class FileReader:
 
         Returns True if more data is expected, otherwise returns False.
         """
-        raw_data, (self.host, self.port) = self.sock.recvfrom(516)
+        raw_data, (self.host, self.port) = self.sock.recvfrom(DATA_HEADER_SIZE + DATA_SIZE)
 
         opcode = self.get_opcode(raw_data[0:2])
         if opcode == OP_ERROR:

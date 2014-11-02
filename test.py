@@ -1,7 +1,9 @@
+#!/usr/bin/env python
 import unittest
 import mock
 import struct
 from client import FileReader, OP_RRQ, OP_DATA, OP_ACK, OP_ERROR, TransferException
+import subprocess
 
 
 class TestFileReader(unittest.TestCase):
@@ -87,6 +89,18 @@ class TestFileReader(unittest.TestCase):
         self.assertEqual(len(self.file_reader.contents), len(a_lot_of_ones + slightly_fewer_twos))
         self.assertEqual(self.file_reader.contents, a_lot_of_ones + slightly_fewer_twos)
 
+
+class TestExitCode(unittest.TestCase):
+
+    def test_exit_code(self):
+        """
+        This test should fail either because
+        (1) You don't have a tftp server running on port 6969
+        (2) You don't have a file called 'thisfiledoesnotexist.txt' being
+            served by the aforementioned tftp server
+        """
+        result = subprocess.call(["./client.py", "-H", "localhost", "-p", "6969", "thisfiledoesnotexist.txt"])
+        self.assertEqual(result, 1)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import socket
 import struct
 import argparse
@@ -123,12 +124,9 @@ class FileReader:
         Write file contents to disk after we've received all data.
         """
         self.send_rrq()
-        try:
-            while self.recv():
-                self.send_ack()
-            self.write_contents_to_file()
-        except TransferException, te:
-            print te
+        while self.recv():
+            self.send_ack()
+        self.write_contents_to_file()
 
 
 if __name__ == "__main__":
@@ -138,5 +136,13 @@ if __name__ == "__main__":
     parser.add_argument('filename', type=str)
     args = parser.parse_args()
 
-    reader = FileReader(args.filename, args.host, args.port)
-    reader.perform_transfer()
+    try:
+        reader = FileReader(args.filename, args.host, args.port)
+        reader.perform_transfer()
+    except TransferException, e:
+        print e
+        exit(1)
+    except socket.timeout, e:
+        print e
+        exit(1)
+    exit(0)

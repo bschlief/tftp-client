@@ -81,7 +81,7 @@ class FileReader:
         Returns True if this data received was 512 byes long. That indicates that more packets are to come.
         Returns False if the packet was 511 or fewer bytes. That signals that the transfer is complete.
         """
-        fmt = '!HH{}s'.format(len(raw_data)-4)
+        fmt = '!HH{}s'.format(len(raw_data)-DATA_HEADER_SIZE)
         opcode, block_number, data = struct.unpack(fmt, raw_data)
         self._contents.write(data)
         self.block_number += 1
